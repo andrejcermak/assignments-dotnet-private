@@ -47,6 +47,30 @@ namespace Datamole.InterviewAssignments.IdentityService
             return AuthenticationResult.Successful(userData.Name, userData.Properties);
         }
 
-        public void SaveToJson(string pathToJsonFile, bool overwrite = false) => throw new System.NotImplementedException();
+        public void SaveToJson(string pathToJsonFile, bool overwrite = false)
+        {
+            var result = JsonSerializer.Serialize(_database);
+            Console.WriteLine(pathToJsonFile);
+            if (!overwrite && File.Exists(pathToJsonFile))
+            {
+                throw new ArgumentException();
+            }
+
+            File.WriteAllText(pathToJsonFile, result);
+        }
+
+        public class UserData
+        {
+            public string Name { get; set; }
+            public IDictionary<string, string> Properties { get; set; }
+            public string Password { get; set; }
+
+            public UserData(string name, string password, IDictionary<string, string>? properties)
+            {
+                Name = name;
+                Password = password;
+                Properties = properties;
+            }
+        }
     }
 }
