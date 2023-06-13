@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
@@ -12,6 +13,13 @@ namespace Datamole.InterviewAssignments.IdentityService
             throw new NotImplementedException();
         }
 
-        public static IIdentityService CreateFromMemory(IEnumerable<string> users, IEnumerable<string> passwords) => new IdentityService(users, passwords);
+        public static IIdentityService CreateFromMemory(IEnumerable<string> users, IEnumerable<string> passwords)
+        {
+            if (users.Count() != passwords.Count())
+            {
+                throw new Exception("Invalid input");
+            }    
+            return new IdentityService(users, passwords);
+        }
     }
 }
