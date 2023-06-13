@@ -15,7 +15,11 @@ namespace Datamole.InterviewAssignments.IdentityService
         {
             var fileContents = File.ReadAllText(pathToJsonFile);
             var encryptionService = new StringEncryptionService();
-            var database = JsonSerializer.Deserialize<Dictionary<string, IdentityService.UserData>>(fileContents);
+            var userData = JsonSerializer.Deserialize<List<IdentityService.UserData>>(fileContents, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase}
+            );
+            var database = userData.ToDictionary(user => user.EncryptedName);
             var service = new IdentityService { PasswordHasher = new PasswordHasher(), Database = database, EncryptionService = encryptionService};
             return service;
         }
@@ -37,9 +41,10 @@ namespace Datamole.InterviewAssignments.IdentityService
                 database.Add(
                     userNameLowerCaseEncrypted,
                     new IdentityService.UserData(
-                        originalUserNameEncrypted, 
+                        userNameLowerCaseEncrypted, 
                         service.PasswordHasher.HashPassword(password),
-                        new Dictionary<string, string>()));
+                        new Dictionary<string, string>(),
+                        originalUserNameEncrypted));
             }
 
             service.EncryptionService = encryptionService;

@@ -24,13 +24,18 @@ namespace Datamole.InterviewAssignments.IdentityService
         public RegistrationResult Register(string userName, string password,
             IDictionary<string, string>? properties = null)
         {
-            if (!Database.ContainsKey(Convert.ToBase64String(EncryptionService.EncryptAsync(userName.ToLower(), "passphrase").Result)))
+            var encryptedUserName = Convert.ToBase64String(EncryptionService.EncryptAsync(userName.ToLower(), "passphrase").Result);
+            var encryptedOriginalUserName =
+                Convert.ToBase64String(EncryptionService.EncryptAsync(userName, "passphrase").Result);
+            if (!Database.ContainsKey(encryptedUserName))
             {
                 Database.Add(Convert.ToBase64String(EncryptionService.EncryptAsync(
                     userName.ToLower(), "passphrase").Result), 
                     new UserData(
-                        Convert.ToBase64String(EncryptionService.EncryptAsync(userName, "passphrase").Result),
-                        PasswordHasher.HashPassword(password), properties?? new Dictionary<string, string>()));
+                        encryptedUserName,
+                        PasswordHasher.HashPassword(password),
+                        properties?? new Dictionary<string, string>(),
+                        encryptedOriginalUserName));
                 
                 return RegistrationResult.Successful();
             }
@@ -52,12 +57,15 @@ namespace Datamole.InterviewAssignments.IdentityService
                 return AuthenticationResult.Failed(AuthenticationError.InvalidPassword);
             }
 
-            return AuthenticationResult.Successful(EncryptionService.DecryptAsync(Convert.FromBase64String(userData.EncryptedName), "passphrase").Result, userData.Properties);
+            return AuthenticationResult.Successful(EncryptionService.DecryptAsync(Convert.FromBase64String(userData.EncryptedOriginalName), "passphrase").Result, userData.Properties);
         }
 
         public void SaveToJson(string pathToJsonFile, bool overwrite = false)
         {
-            var result = JsonSerializer.Serialize(Database);
+            var result = JsonSerializer.Serialize(Database.Values, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase}
+            );
             Console.WriteLine(pathToJsonFile);
             if (!overwrite && File.Exists(pathToJsonFile))
             {
@@ -70,14 +78,17 @@ namespace Datamole.InterviewAssignments.IdentityService
         public class UserData
         {
             public string EncryptedName { get; set; }
+            public string EncryptedOriginalName { get; set; }
+            
             public IDictionary<string, string> Properties { get; set; }
             public PasswordObject Password { get; set; }
 
-            public UserData(string encryptedName, PasswordObject password, IDictionary<string, string>? properties)
+            public UserData(string encryptedName, PasswordObject password, IDictionary<string, string>? properties, string encryptedOriginalName)
             {
                 EncryptedName = encryptedName;
                 Password = password;
                 Properties = properties;
+                EncryptedOriginalName = encryptedOriginalName;
             }
         }
     }
