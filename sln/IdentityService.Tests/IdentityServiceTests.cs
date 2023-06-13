@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Datamole.InterviewAssignments.IdentityService.Models;
 
@@ -18,14 +19,14 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         [TestMethod]
         [DataRow("jsmith", "jane123.")]
         [DataRow("jSmith", "jane123.")]
-        public void AuthenticationTest_SuccessfulAuthentication(string userName, string password)
+        public async Task AuthenticationTest_SuccessfulAuthentication(string userName, string password)
         {
             // Arrange
             var service =
-                IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+                await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
-            var result = service.Authenticate(userName, password);
+            var result =  service.Authenticate(userName, password);
 
             // Assert
             Assert.IsTrue(result.IsSuccessful);
@@ -39,10 +40,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         [DataRow("jsmitch", "jane123.",  AuthenticationError.UserNotFound, null, null)]
         [DataRow("jsmith", "jane123",  AuthenticationError.InvalidPassword, null, null)]
         [DataRow("jSmith", "Jane123.",  AuthenticationError.InvalidPassword, null, null)]
-        public void AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
+        public async Task AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
         {
             // Arrange
-            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
             var result = service.Authenticate(userName, password);
@@ -58,10 +59,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
 
         [TestMethod]
-        public void RegistrationTest_RegistrationOfNewUserSucceeds()
+        public async Task RegistrationTest_RegistrationOfNewUserSucceeds()
         {
             // Arrange
-            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
             var customProperties = new Dictionary<string, string>
             {
                 {"Prop1", "Val1"},
@@ -78,10 +79,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
         
         [TestMethod]
-        public void RegistrationTest_RegistrationOfExistingUserFails()
+        public async Task RegistrationTest_RegistrationOfExistingUserFails()
         {
             // Arrange
-            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
 
             // Act
             var result6 = service.Register("JaneSmith", "john123.");
@@ -93,11 +94,11 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
         
         [TestMethod]
-        public void RegistrationTest_FlowTest()
+        public async Task RegistrationTest_FlowTest()
         {
             // Arrange
 
-            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
 
             var customProperties = new Dictionary<string, string>
             {
@@ -130,7 +131,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
 
 
         [TestMethod]
-        public void SavingToFileTest()
+        public async Task SavingToFileTest()
         {
             // Arrange
 
@@ -141,7 +142,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
                 {"Prop2", "Val2"}
             };
 
-            var service1 = IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            var service1 = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
 
@@ -199,6 +200,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         {
             if (token is JObject obj)
             {
+                Console.WriteLine(token);
                 Assert.IsTrue(obj.Properties().Select(p => p.Name.First()).All(char.IsLower), "Invalid format of property name.");
             }
             else if (token is JArray array)
