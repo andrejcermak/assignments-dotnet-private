@@ -16,39 +16,45 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
     public class IdentityServiceTests
     {
         [TestMethod]
-        public void AuthenticationTest()
+        [DataRow("jsmith", "jane123.")]
+        [DataRow("jSmith", "jane123.")]
+        public void AuthenticationTest_SuccessfulAuthentication(string userName, string password)
         {
             // Arrange
+            var service =
+                IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
+            // Act
+            var result = service.Authenticate(userName, password);
+
+            // Assert
+            Assert.IsTrue(result.IsSuccessful);
+            Assert.IsNull(result.Error);
+            Assert.IsFalse(result.Properties?.Any());
+        }
+
+
+
+        [TestMethod]
+        [DataRow("jsmitch", "jane123.",  AuthenticationError.UserNotFound, null, null)]
+        [DataRow("jsmith", "jane123",  AuthenticationError.InvalidPassword, null, null)]
+        [DataRow("jSmith", "Jane123.",  AuthenticationError.InvalidPassword, null, null)]
+        public void AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
+        {
+            // Arrange
             var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
-
-            var result1 = service.Authenticate("jsmitch", "jane123.");
-            var result2 = service.Authenticate("jsmith", "jane123");
-            var result3 = service.Authenticate("jsmith", "jane123.");
-            var result4 = service.Authenticate("jSmith", "jane123.");
-            var result5 = service.Authenticate("jSmith", "Jane123.");
-
+            var result = service.Authenticate(userName, password);
+            
             // Assert
-
-            Assert.IsFalse(result1.IsSuccessful);
-            Assert.AreEqual(AuthenticationError.UserNotFound, result1.Error);
-            Assert.IsNull(result1.Properties);
-            Assert.IsNull(result1.OriginalUserName);
-
-            Assert.IsFalse(result2.IsSuccessful);
-            Assert.AreEqual(AuthenticationError.InvalidPassword, result2.Error);
-
-            Assert.IsTrue(result3.IsSuccessful);
-            Assert.IsNull(result3.Error);
-            Assert.IsFalse(result3.Properties?.Any());
-
-            Assert.IsTrue(result4.IsSuccessful);
-            Assert.IsNull(result4.Error);
-
-            Assert.IsFalse(result5.IsSuccessful);
-            Assert.AreEqual(AuthenticationError.InvalidPassword, result5.Error);
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.AreEqual(error, result.Error);
+            if (error is AuthenticationError.UserNotFound)
+            {
+                Assert.AreEqual(result.Properties, properties);
+                Assert.AreEqual(result.OriginalUserName, originalUserName);
+            }
         }
 
         [TestMethod]
