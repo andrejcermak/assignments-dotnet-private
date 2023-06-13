@@ -58,7 +58,42 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
 
         [TestMethod]
-        public void RegistrationTest()
+        public void RegistrationTest_RegistrationOfNewUserSucceeds()
+        {
+            // Arrange
+            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var customProperties = new Dictionary<string, string>
+            {
+                {"Prop1", "Val1"},
+                {"Prop2", "Val2"}
+            };
+
+            // Act
+            var result2 = service.Register("jSmith", "jane123.", customProperties);
+            
+            // Assert
+            Assert.IsTrue(result2.IsSuccessful);
+            Assert.IsNull(result2.Error);
+            
+        }
+        
+        [TestMethod]
+        public void RegistrationTest_RegistrationOfExistingUserFails()
+        {
+            // Arrange
+            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+
+            // Act
+            var result6 = service.Register("JaneSmith", "john123.");
+            
+            // Assert
+            Assert.IsFalse(result6.IsSuccessful);
+            Assert.AreEqual(RegistrationError.UserAlreadyExists, result6.Error);
+            
+        }
+        
+        [TestMethod]
+        public void RegistrationTest_FlowTest()
         {
             // Arrange
 
@@ -72,19 +107,11 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
 
             // Act
 
-            var result1 = service.Authenticate("jsmith", "jane123.");
             var result2 = service.Register("jSmith", "jane123.", customProperties);
             var result3 = service.Authenticate("jsmith", "jane123.");
             var result4 = service.Authenticate("jSmith", "jane123.");
-            var result5 = service.Register("jsmith", "jane123.");
-
-            var result6 = service.Register("JaneSmith", "john123.");
-
+            
             // Assert
-
-            Assert.IsFalse(result1.IsSuccessful);
-            Assert.AreEqual(AuthenticationError.UserNotFound, result1.Error);
-
             Assert.IsTrue(result2.IsSuccessful);
             Assert.IsNull(result2.Error);
 
@@ -99,12 +126,6 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
 
             Assert.IsTrue(result4.IsSuccessful);
             Assert.IsNull(result4.Error);
-
-            Assert.IsFalse(result5.IsSuccessful);
-            Assert.AreEqual(RegistrationError.UserAlreadyExists, result5.Error);
-
-            Assert.IsFalse(result6.IsSuccessful);
-            Assert.AreEqual(RegistrationError.UserAlreadyExists, result6.Error);
         }
 
 
