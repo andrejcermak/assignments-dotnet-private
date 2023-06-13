@@ -12,11 +12,6 @@ namespace Datamole.InterviewAssignments.IdentityService
             throw new NotImplementedException();
         }
 
-        public static IIdentityService CreateFromMemory(IEnumerable<string> users, IEnumerable<string> passwords)
-        {
-            // TODO: Implement
-
-            throw new NotImplementedException();
-        }
+        public static IIdentityService CreateFromMemory(IEnumerable<string> users, IEnumerable<string> passwords) => new IdentityService(users, passwords);
     }
 }
