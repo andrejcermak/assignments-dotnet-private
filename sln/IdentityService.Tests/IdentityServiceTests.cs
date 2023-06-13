@@ -129,6 +129,20 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
             Assert.IsNull(result4.Error);
         }
 
+        [TestMethod]
+        public async Task SavingToFileTest_ThrowsExceptionWhenInconsistentData()
+        {
+            // Arrange
+            var filePath = $"{Guid.NewGuid()}.json";
+            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            service.SaveToJson(filePath);
+            
+            // Act
+            await File.WriteAllTextAsync(filePath,"Overwritten data");
+
+            // Assert
+            Assert.ThrowsException<Exception>(() => IdentityServiceFactory.CreateFromJson(filePath));
+        }
 
         [TestMethod]
         public async Task SavingToFileTest()

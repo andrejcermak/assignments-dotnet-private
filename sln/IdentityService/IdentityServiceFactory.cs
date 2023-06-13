@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -13,6 +14,17 @@ namespace Datamole.InterviewAssignments.IdentityService
     {
         public static IIdentityService CreateFromJson(string pathToJsonFile)
         {
+            var stringHash = string.Empty;
+            using (var stream = File.OpenRead(pathToJsonFile))
+            {
+                byte[] hash = SHA256.Create().ComputeHash(stream);
+                stringHash = Convert.ToBase64String(hash);
+                if (stringHash != File.ReadAllText(pathToJsonFile + ".hash"))
+                {
+                    throw new Exception("CONSISTENCY ISSUE. POSSIBLE SENSITIVE DATA LEAK.");
+                }
+            }
+            
             var fileContents = File.ReadAllText(pathToJsonFile);
             var encryptionService = new StringEncryptionService();
             var userData = JsonSerializer.Deserialize<List<IdentityService.UserData>>(fileContents, new JsonSerializerOptions

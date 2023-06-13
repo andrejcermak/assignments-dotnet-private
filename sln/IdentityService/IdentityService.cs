@@ -66,7 +66,11 @@ namespace Datamole.InterviewAssignments.IdentityService
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase}
             );
-            Console.WriteLine(pathToJsonFile);
+            var hash = SHA256.Create().ComputeHash(new MemoryStream(Encoding.UTF8.GetBytes(result)));
+            var stringHash = Convert.ToBase64String(hash);
+            File.WriteAllText(pathToJsonFile + ".hash", stringHash);
+
+            Console.WriteLine("Writing to : " + pathToJsonFile);
             if (!overwrite && File.Exists(pathToJsonFile))
             {
                 throw new ArgumentException();
