@@ -20,6 +20,13 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
             0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
         };
 
+        public StringEncryptionService(string passphrase)
+        {
+            Passphrase = passphrase;
+        }
+
+        private string Passphrase { get; set; }
+
         private byte[] DeriveKeyFromPassword(string password)
         {
             var emptySalt = Array.Empty<byte>();
@@ -34,10 +41,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
                 desiredKeyLength);
         }
         
-        public async Task<byte[]> EncryptAsync(string clearText, string passphrase)
+        public async Task<byte[]> EncryptAsync(string clearText)
         {
             using Aes aes = Aes.Create();
-            aes.Key = DeriveKeyFromPassword(passphrase);
+            aes.Key = DeriveKeyFromPassword(Passphrase);
             aes.IV = IV;
             using MemoryStream output = new();
             using CryptoStream cryptoStream = new(output, aes.CreateEncryptor(), CryptoStreamMode.Write);
@@ -46,10 +53,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
             return output.ToArray();
         }
         
-        public async Task<string> DecryptAsync(byte[] encrypted, string passphrase)
+        public async Task<string> DecryptAsync(byte[] encrypted)
         {
             using Aes aes = Aes.Create();
-            aes.Key = DeriveKeyFromPassword(passphrase);
+            aes.Key = DeriveKeyFromPassword(Passphrase);
             aes.IV = IV;
             using MemoryStream input = new(encrypted);
             using CryptoStream cryptoStream = new(input, aes.CreateDecryptor(), CryptoStreamMode.Read);
