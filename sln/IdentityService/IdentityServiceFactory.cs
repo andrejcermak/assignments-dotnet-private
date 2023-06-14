@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
+using Datamole.InterviewAssignments.IdentityService.Models;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
@@ -10,7 +11,7 @@ namespace Datamole.InterviewAssignments.IdentityService
             new IdentityServiceFromFile(
                 new PasswordHasher(),
                 new StringEncryptionService(""),
-                new Dictionary<string, AbstractIdentityService.UserData>(),
+                new Dictionary<string, UserData>(),
                 pathToJsonFile);
 
         public static IIdentityService CreateFromMemory(IEnumerable<string> users,
@@ -18,7 +19,7 @@ namespace Datamole.InterviewAssignments.IdentityService
             new IdentityServiceFromMemory(
                 new PasswordHasher(),
                 new StringEncryptionService(""),
-                new Dictionary<string, AbstractIdentityService.UserData>(),
+                new Dictionary<string, UserData>(),
                 users,
                 passwords);
     }

@@ -87,22 +87,5 @@ namespace Datamole.InterviewAssignments.IdentityService
 
             File.WriteAllText(pathToJsonFile, result);
         }
-
-        public class UserData
-        {
-            public string EncryptedName { get; }
-            public string EncryptedOriginalName { get; }
-            
-            public IDictionary<string, string> Properties { get; }
-            public PasswordObject Password { get; }
-
-            public UserData(string encryptedName, PasswordObject password, IDictionary<string, string>? properties, string encryptedOriginalName)
-            {
-                EncryptedName = encryptedName;
-                Password = password;
-                Properties = properties;
-                EncryptedOriginalName = encryptedOriginalName;
-            }
-        }
     }
 }

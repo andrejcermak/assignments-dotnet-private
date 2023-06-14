@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
+using Datamole.InterviewAssignments.IdentityService.Models;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {

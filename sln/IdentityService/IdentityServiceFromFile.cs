@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
+using Datamole.InterviewAssignments.IdentityService.Models;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
