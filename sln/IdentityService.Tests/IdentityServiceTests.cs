@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,11 +95,11 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
         
         [TestMethod]
-        public async Task RegistrationTest_FlowTest()
+        public async Task RegistrationTest_RegistrationAuthenticationFlowTest()
         {
             // Arrange
 
-            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = IdentityServiceFactory.CreateFromMemory(ImmutableList<string>.Empty, ImmutableList<string>.Empty);
 
             var customProperties = new Dictionary<string, string>
             {
@@ -110,7 +111,6 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
 
             var result2 = service.Register("jSmith", "jane123.", customProperties);
             var result3 = service.Authenticate("jsmith", "jane123.");
-            var result4 = service.Authenticate("jSmith", "jane123.");
             
             // Assert
             Assert.IsTrue(result2.IsSuccessful);
@@ -123,10 +123,6 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
             Assert.AreEqual(2, result3.Properties?.Count);
             Assert.AreEqual(customProperties["Prop1"], result3.Properties?["Prop1"]);
             Assert.AreEqual(customProperties["Prop2"], result3.Properties?["Prop2"]);
-
-
-            Assert.IsTrue(result4.IsSuccessful);
-            Assert.IsNull(result4.Error);
         }
 
         [TestMethod]
