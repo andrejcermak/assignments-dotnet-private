@@ -12,14 +12,14 @@ using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
-    public abstract class IdentityService : IIdentityService
+    public abstract class AbstractIdentityService : IIdentityService
     {
         private Dictionary<string, UserData> Database { get; }
         private PasswordHasher PasswordHasher { get; }
 
         private StringEncryptionService EncryptionService { get; }
 
-        internal IdentityService(PasswordHasher passwordHasher, StringEncryptionService encryptionService, Dictionary<string, UserData> database)
+        internal AbstractIdentityService(PasswordHasher passwordHasher, StringEncryptionService encryptionService, Dictionary<string, UserData> database)
         {
             PasswordHasher = passwordHasher;
             EncryptionService = encryptionService;
@@ -34,9 +34,8 @@ namespace Datamole.InterviewAssignments.IdentityService
         public RegistrationResult Register(string userName, string password,
             IDictionary<string, string>? properties = null)
         {
-            var encryptedUserName = Convert.ToBase64String(EncryptionService.EncryptAsync(userName.ToLower()).Result);
-            var encryptedOriginalUserName =
-                Convert.ToBase64String(EncryptionService.EncryptAsync(userName).Result);
+            var encryptedUserName = EncryptionService.Encrypt(userName.ToLower());
+            var encryptedOriginalUserName =EncryptionService.Encrypt(userName);
             if (!Database.ContainsKey(encryptedUserName))
             {
                 Database.Add(encryptedUserName, 
@@ -54,8 +53,7 @@ namespace Datamole.InterviewAssignments.IdentityService
 
         public AuthenticationResult Authenticate(string userName, string password)
         {
-            var userData = Database.GetValueOrDefault(Convert.ToBase64String(EncryptionService.EncryptAsync(
-                userName.ToLower()).Result));
+            var userData = Database.GetValueOrDefault(EncryptionService.Encrypt(userName.ToLower()));
             if (userData is null)
             {
                 return AuthenticationResult.Failed(AuthenticationError.UserNotFound);
@@ -66,7 +64,7 @@ namespace Datamole.InterviewAssignments.IdentityService
                 return AuthenticationResult.Failed(AuthenticationError.InvalidPassword);
             }
 
-            return AuthenticationResult.Successful(EncryptionService.DecryptAsync(Convert.FromBase64String(userData.EncryptedOriginalName)).Result, userData.Properties);
+            return AuthenticationResult.Successful(EncryptionService.Decrypt(userData.EncryptedOriginalName), userData.Properties);
         }
 
         public void SaveToJson(string pathToJsonFile, bool overwrite = false)

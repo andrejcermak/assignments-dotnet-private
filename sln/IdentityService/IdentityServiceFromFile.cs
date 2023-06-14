@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
-    public class IdentityServiceFromFile : IdentityService
+    public class AbstractIdentityServiceFromFile : AbstractIdentityService
     {
-        internal IdentityServiceFromFile(
+        internal AbstractIdentityServiceFromFile(
             PasswordHasher passwordHasher, 
             StringEncryptionService encryptionService, 
             Dictionary<string, UserData> database,

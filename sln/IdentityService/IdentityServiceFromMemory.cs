@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
-    public class IdentityServiceFromMemory : IdentityService
+    public class AbstractIdentityServiceFromMemory : AbstractIdentityService
     {
-        internal IdentityServiceFromMemory(
+        internal AbstractIdentityServiceFromMemory(
             PasswordHasher passwordHasher,
             StringEncryptionService encryptionService,
             Dictionary<string, UserData> database,
@@ -19,10 +18,8 @@ namespace Datamole.InterviewAssignments.IdentityService
             CheckCorrectInput(users, passwords);
             foreach (var (userName, password) in users.Zip(passwords))
             {
-                var userNameLowerCaseEncrypted =
-                    Convert.ToBase64String(encryptionService.EncryptAsync(userName.ToLower()).Result);
-                var originalUserNameEncrypted =
-                    Convert.ToBase64String(encryptionService.EncryptAsync(userName).Result);
+                var userNameLowerCaseEncrypted =encryptionService.Encrypt(userName.ToLower());
+                var originalUserNameEncrypted = encryptionService.Encrypt(userName);
                 database.Add(userNameLowerCaseEncrypted,
                     new UserData(
                         userNameLowerCaseEncrypted,

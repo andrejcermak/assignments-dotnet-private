@@ -4,8 +4,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-using SecurityDriven.Inferno.Extensions;
-
 namespace Datamole.InterviewAssignments.IdentityService.Helpers
 {
     /// <summary>
@@ -41,7 +39,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
                 desiredKeyLength);
         }
         
-        public async Task<byte[]> EncryptAsync(string clearText)
+        private async Task<byte[]> EncryptAsync(string clearText)
         {
             using Aes aes = Aes.Create();
             aes.Key = DeriveKeyFromPassword(Passphrase);
@@ -53,7 +51,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
             return output.ToArray();
         }
         
-        public async Task<string> DecryptAsync(byte[] encrypted)
+        private async Task<string> DecryptAsync(byte[] encrypted)
         {
             using Aes aes = Aes.Create();
             aes.Key = DeriveKeyFromPassword(Passphrase);
@@ -64,5 +62,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
             await cryptoStream.CopyToAsync(output);
             return Encoding.Unicode.GetString(output.ToArray());
         }
+
+        public string Encrypt(string clearText) => Convert.ToBase64String(EncryptAsync(clearText).Result);
+        
+        public string Decrypt(string encrypted) => DecryptAsync(Convert.FromBase64String(encrypted)).Result;
+
     }
 }
