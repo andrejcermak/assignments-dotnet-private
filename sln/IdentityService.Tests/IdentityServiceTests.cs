@@ -130,6 +130,22 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
 
         [TestMethod]
+        public void SavingToFileTest_SucceedsWhenConsistentData()
+        {
+            // Arrange
+            var filePath = $"{Guid.NewGuid()}.json";
+            var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            service.SaveToJson(filePath);
+            
+            // Act
+            var service2 = IdentityServiceFactory.CreateFromJson(filePath);
+            
+            // Assert
+            Assert.IsInstanceOfType(service2, typeof(IIdentityService));
+            File.Delete(filePath);
+        }
+        
+        [TestMethod]
         public void SavingToFileTest_ThrowsExceptionWhenInconsistentData()
         {
             // Arrange
