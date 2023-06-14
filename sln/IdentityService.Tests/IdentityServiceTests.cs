@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Datamole.InterviewAssignments.IdentityService.Models;
 
@@ -20,7 +19,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         [TestMethod]
         [DataRow("jsmith", "jane123.")]
         [DataRow("jSmith", "jane123.")]
-        public async Task AuthenticationTest_SuccessfulAuthentication(string userName, string password)
+        public void AuthenticationTest_SuccessfulAuthentication(string userName, string password)
         {
             // Arrange
             var service =
@@ -41,7 +40,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         [DataRow("jsmitch", "jane123.",  AuthenticationError.UserNotFound, null, null)]
         [DataRow("jsmith", "jane123",  AuthenticationError.InvalidPassword, null, null)]
         [DataRow("jSmith", "Jane123.",  AuthenticationError.InvalidPassword, null, null)]
-        public async Task AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
+        public void AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
         {
             // Arrange
             var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
@@ -60,7 +59,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
 
         [TestMethod]
-        public async Task RegistrationTest_RegistrationOfNewUserSucceeds()
+        public void RegistrationTest_RegistrationOfNewUserSucceeds()
         {
             // Arrange
             var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
@@ -76,11 +75,10 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
             // Assert
             Assert.IsTrue(result2.IsSuccessful);
             Assert.IsNull(result2.Error);
-            
         }
         
         [TestMethod]
-        public async Task RegistrationTest_RegistrationOfExistingUserFails()
+        public void RegistrationTest_RegistrationOfExistingUserFails()
         {
             // Arrange
             var service = IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
@@ -95,7 +93,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
         
         [TestMethod]
-        public async Task RegistrationTest_RegistrationAuthenticationFlowTest()
+        public void RegistrationTest_RegistrationAuthenticationFlowTest()
         {
             // Arrange
 
