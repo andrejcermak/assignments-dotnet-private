@@ -19,7 +19,7 @@ namespace Datamole.InterviewAssignments.IdentityService
                 new Dictionary<string, IdentityService.UserData>(),
                 pathToJsonFile);
 
-        public static async Task<IIdentityService> CreateFromMemory(IEnumerable<string> users,
+        public static async Task<IIdentityService> CreateFromMemoryAsync(IEnumerable<string> users,
             IEnumerable<string> passwords) =>
             new IdentityServiceFromMemory(
                 new PasswordHasher(),

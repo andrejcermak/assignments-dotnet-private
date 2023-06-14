@@ -23,7 +23,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         {
             // Arrange
             var service =
-                await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+                await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
             var result =  service.Authenticate(userName, password);
@@ -43,7 +43,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         public async Task AuthenticationTest_FailedAuthentication(string userName, string password, AuthenticationError error, IDictionary<string, string> properties, string originalUserName)
         {
             // Arrange
-            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            var service = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
             var result = service.Authenticate(userName, password);
@@ -62,7 +62,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         public async Task RegistrationTest_RegistrationOfNewUserSucceeds()
         {
             // Arrange
-            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "janeSmith" }, new List<string> { "john123." });
             var customProperties = new Dictionary<string, string>
             {
                 {"Prop1", "Val1"},
@@ -82,7 +82,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         public async Task RegistrationTest_RegistrationOfExistingUserFails()
         {
             // Arrange
-            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "janeSmith" }, new List<string> { "john123." });
 
             // Act
             var result6 = service.Register("JaneSmith", "john123.");
@@ -98,7 +98,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         {
             // Arrange
 
-            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "janeSmith" }, new List<string> { "john123." });
+            var service = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "janeSmith" }, new List<string> { "john123." });
 
             var customProperties = new Dictionary<string, string>
             {
@@ -134,7 +134,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         {
             // Arrange
             var filePath = $"{Guid.NewGuid()}.json";
-            var service = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            var service = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "jsmith" }, new List<string> { "jane123." });
             service.SaveToJson(filePath);
             
             // Act
@@ -156,7 +156,7 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
                 {"Prop2", "Val2"}
             };
 
-            var service1 = await IdentityServiceFactory.CreateFromMemory(new List<string> { "jsmith" }, new List<string> { "jane123." });
+            var service1 = await IdentityServiceFactory.CreateFromMemoryAsync(new List<string> { "jsmith" }, new List<string> { "jane123." });
 
             // Act
 
