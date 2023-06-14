@@ -130,6 +130,19 @@ namespace Datamole.InterviewAssignments.IdentityService.Tests
         }
 
         [TestMethod]
+        public void ReadingFromMemory_ThrowsExceptionWhenInvalidInput()
+        {
+            // Arrange
+            var input = (new List<string> { "janeSmith" , "anotherUserWithouPassword"}, new List<string> { "john123." });
+
+            // Act
+            var action = new Func<IIdentityService>(() => IdentityServiceFactory.CreateFromMemory(input.Item1, input.Item2));
+
+            // Assert
+            Assert.ThrowsException<Exception>(action);
+        }
+        
+        [TestMethod]
         public void SavingToFileTest_SucceedsWhenConsistentData()
         {
             // Arrange
