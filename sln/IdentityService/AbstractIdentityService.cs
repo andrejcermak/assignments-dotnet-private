@@ -86,11 +86,11 @@ namespace Datamole.InterviewAssignments.IdentityService
 
         public class UserData
         {
-            public string EncryptedName { get; set; }
-            public string EncryptedOriginalName { get; set; }
+            public string EncryptedName { get; }
+            public string EncryptedOriginalName { get; }
             
-            public IDictionary<string, string> Properties { get; set; }
-            public PasswordObject Password { get; set; }
+            public IDictionary<string, string> Properties { get; }
+            public PasswordObject Password { get; }
 
             public UserData(string encryptedName, PasswordObject password, IDictionary<string, string>? properties, string encryptedOriginalName)
             {

@@ -28,8 +28,8 @@ namespace Datamole.InterviewAssignments.IdentityService.Helpers
         private byte[] DeriveKeyFromPassword(string password)
         {
             var emptySalt = Array.Empty<byte>();
-            var iterations = 1000;
-            var desiredKeyLength = 16; // 16 bytes equal 128 bits.
+            const int iterations = 1000;
+            const int desiredKeyLength = 16; // 16 bytes equal 128 bits.
             var hashMethod = HashAlgorithmName.SHA384;
             return Rfc2898DeriveBytes.Pbkdf2(
                 Encoding.Unicode.GetBytes(password),
