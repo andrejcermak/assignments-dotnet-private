@@ -7,9 +7,12 @@ using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
-    public class AbstractIdentityServiceFromFile : AbstractIdentityService
+    /// <summary>
+    /// 
+    /// </summary>
+    public class IdentityServiceFromFile : AbstractIdentityService
     {
-        internal AbstractIdentityServiceFromFile(
+        internal IdentityServiceFromFile(
             PasswordHasher passwordHasher, 
             StringEncryptionService encryptionService, 
             Dictionary<string, UserData> database,

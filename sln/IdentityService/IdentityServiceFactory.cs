@@ -7,7 +7,7 @@ namespace Datamole.InterviewAssignments.IdentityService
     public static class IdentityServiceFactory
     {
         public static IIdentityService CreateFromJson(string pathToJsonFile) =>
-            new AbstractIdentityServiceFromFile(
+            new IdentityServiceFromFile(
                 new PasswordHasher(),
                 new StringEncryptionService(""),
                 new Dictionary<string, AbstractIdentityService.UserData>(),
@@ -15,7 +15,7 @@ namespace Datamole.InterviewAssignments.IdentityService
 
         public static IIdentityService CreateFromMemory(IEnumerable<string> users,
             IEnumerable<string> passwords) =>
-            new AbstractIdentityServiceFromMemory(
+            new IdentityServiceFromMemory(
                 new PasswordHasher(),
                 new StringEncryptionService(""),
                 new Dictionary<string, AbstractIdentityService.UserData>(),
