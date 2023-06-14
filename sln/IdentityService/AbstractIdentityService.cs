@@ -35,6 +35,8 @@ namespace Datamole.InterviewAssignments.IdentityService
             var hash = SHA256.Create().ComputeHash(inputStream);
             return Convert.ToBase64String(hash);
         }
+
+        /// <inheritdoc/>
         public RegistrationResult Register(string userName, string password,
             IDictionary<string, string>? properties = null)
         {
@@ -55,6 +57,7 @@ namespace Datamole.InterviewAssignments.IdentityService
             return RegistrationResult.Failed(RegistrationError.UserAlreadyExists);
         }
 
+        /// <inheritdoc/>
         public AuthenticationResult Authenticate(string userName, string password)
         {
             var userData = Database.GetValueOrDefault(EncryptionService.Encrypt(userName.ToLower()));
@@ -70,7 +73,8 @@ namespace Datamole.InterviewAssignments.IdentityService
 
             return AuthenticationResult.Successful(EncryptionService.Decrypt(userData.EncryptedOriginalName), userData.Properties);
         }
-
+        
+        /// <inheritdoc/>
         public void SaveToJson(string pathToJsonFile, bool overwrite = false)
         {
             var result = JsonSerializer.Serialize(Database.Values, new JsonSerializerOptions
