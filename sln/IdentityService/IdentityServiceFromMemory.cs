@@ -6,6 +6,9 @@ using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
+    /// <summary>
+    /// Concrete implementation of identity service using data from memory
+    /// </summary>
     public class IdentityServiceFromMemory : AbstractIdentityService
     {
         internal IdentityServiceFromMemory(

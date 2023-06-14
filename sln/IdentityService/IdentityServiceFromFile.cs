@@ -8,7 +8,7 @@ using Datamole.InterviewAssignments.IdentityService.Helpers;
 namespace Datamole.InterviewAssignments.IdentityService
 {
     /// <summary>
-    /// 
+    /// Concrete implementation of identity service using data from json file
     /// </summary>
     public class IdentityServiceFromFile : AbstractIdentityService
     {

@@ -12,6 +12,10 @@ using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
+    /// <summary>
+    /// Abstract identity service handling all the identity logic
+    /// </summary>
+    
     public abstract class AbstractIdentityService : IIdentityService
     {
         private Dictionary<string, UserData> Database { get; }
