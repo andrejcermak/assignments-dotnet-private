@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 using Datamole.InterviewAssignments.IdentityService.Models;
 
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Datamole.InterviewAssignments.IdentityService.Helpers;
 
 namespace Datamole.InterviewAssignments.IdentityService
 {
-    public class IdentityService : IIdentityService
+    public abstract class IdentityService : IIdentityService
     {
         private Dictionary<string, UserData> Database { get; }
         private PasswordHasher PasswordHasher { get; }
@@ -28,35 +26,10 @@ namespace Datamole.InterviewAssignments.IdentityService
             Database = database;
         }
 
-        internal IdentityService FillDatabaseFromFile(string pathToJsonFile)
+        internal string CalculateFileHash(Stream inputStream)
         {
-            var fileContents = File.ReadAllText(pathToJsonFile);
-            var userData = JsonSerializer.Deserialize<List<UserData>>(fileContents, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                }
-            );
-            userData.ForEach(user => Database.Add(user.EncryptedName, user));
-            return this;
-        }
-        internal async Task<IdentityService> FillDatabaseFromMemoryAsync(
-            IEnumerable<string> users,
-            IEnumerable<string> passwords)
-        {
-            foreach (var (userName, password) in users.Zip(passwords))
-            {
-                var userNameLowerCaseEncrypted =
-                    Convert.ToBase64String(await EncryptionService.EncryptAsync(userName.ToLower()));
-                var originalUserNameEncrypted =
-                    Convert.ToBase64String(await EncryptionService.EncryptAsync(userName));
-                Database.Add(userNameLowerCaseEncrypted,
-                    new UserData(
-                        userNameLowerCaseEncrypted,
-                        PasswordHasher.HashPassword(password),
-                        new Dictionary<string, string>(),
-                        originalUserNameEncrypted));
-            }
-            return this;
+            var hash = SHA256.Create().ComputeHash(inputStream);
+            return Convert.ToBase64String(hash);
         }
         public RegistrationResult Register(string userName, string password,
             IDictionary<string, string>? properties = null)
@@ -102,11 +75,9 @@ namespace Datamole.InterviewAssignments.IdentityService
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase}
             );
-            var hash = SHA256.Create().ComputeHash(new MemoryStream(Encoding.UTF8.GetBytes(result)));
-            var stringHash = Convert.ToBase64String(hash);
+            var stringHash = CalculateFileHash(new MemoryStream(Encoding.UTF8.GetBytes(result)));
             File.WriteAllText(pathToJsonFile + ".hash", stringHash);
 
-            Console.WriteLine("Writing to : " + pathToJsonFile);
             if (!overwrite && File.Exists(pathToJsonFile))
             {
                 throw new ArgumentException();
